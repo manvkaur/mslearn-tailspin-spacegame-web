@@ -29,13 +29,14 @@ steps:
   - task: DotNetCoreCLI@2
     displayName: 'Pack the project - $(buildConfiguration)'
     inputs:
-        command: 'pack'
-        projects: '**/*.csproj'
-        arguments: '--no-build --configuration $(buildConfiguration) -o packages'
-        versioningScheme: byPrereleaseNumber
-        majorVersion: '1'
-        minorVersion: '0'
-        patchVersion: '0'
+      command: 'custom'
+      projects: '**/*.csproj'
+      custom: 'pack'
+      arguments: '--no-build --configuration $(buildConfiguration) -o packages'
+      versioningScheme: byPrereleaseNumber
+      majorVersion: '1'
+      minorVersion: '0'
+      patchVersion: '0'
 
-  - publish: $(System.DefaultWorkingDirectory)/*.nupkg
+  - publish: $(System.DefaultWorkingDirectory)/packages
     artifact: drop
