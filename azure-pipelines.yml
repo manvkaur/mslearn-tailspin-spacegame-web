@@ -37,5 +37,5 @@ steps:
         minorVersion: '0'
         patchVersion: '0'
 
-  - publish: $(System.DefaultWorkingDirectory)/packages
+  - publish: $(System.DefaultWorkingDirectory)/*.nupkg
     artifact: drop
