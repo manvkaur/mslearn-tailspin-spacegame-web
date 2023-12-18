@@ -1,3 +1,41 @@
-pool: MyAgentPool
+
+
+variables:
+  buildConfiguration: Release
+
+continueOnError: false
+pool:
+  vmImage: windows-latest
+
 steps:
-- bash: echo hello world
+  - task: UseDotNet@2
+    displayName: 'Install .NET 6'
+    inputs:
+      version: 6.0.x
+      packageType: sdk
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Dotnet Restore'
+    inputs:
+      command: 'restore'
+      feedsToUse: 'select'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build the project - $(buildConfiguration)'
+    inputs:
+        command: 'build'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+        projects: '**/*.csproj'
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack the project - $(buildConfiguration)'
+    inputs:
+        command: 'pack'
+        projects: '**/*.csproj'
+        arguments: '--no-build --configuration $(buildConfiguration) -o packages'
+        versioningScheme: byPrereleaseNumber
+        majorVersion: '1'
+        minorVersion: '0'
+        patchVersion: '0'
+
+  - publish: $(System.DefaultWorkingDirectory)/packages
+    artifact: drop
